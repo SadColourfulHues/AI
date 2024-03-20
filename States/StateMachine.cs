@@ -1,101 +1,67 @@
 using Godot;
+using System.Collections.Generic;
 
-namespace SadChromaLib.AI.States;
+namespace SadChromaLib.AI.StateMachine;
 
-/// <summary> An object that handles processing through states. Sub-classing allows for fully customising how states are handled. </summary>
-public sealed partial class StateMachine : RefCounted
+/// <summary>
+/// An evaluator that processes an agent's actions through the use of states.
+/// </summary>
+public sealed partial class StateMachine
 {
-    public delegate void StateMachineDelegate(State state);
-    public delegate void StateClearedDelegate();
+    public delegate void StateChangedEventHandler(StringName stateId);
+    AgentContext _context;
 
-    /// <summary> This event is called when the state machine is 'preparing' a state before it becomes active. </summary>
-    public StateMachineDelegate onConfigure;
-    /// <summary> This event is called when the 'CompleteState' function is called. </summary>
-    public StateMachineDelegate onCompletion;
-    /// <summary> This event is called when the state machine has successfully transitioned to a valid state. </summary>
-    public StateMachineDelegate onTransition;
-    /// <summary> This event is called when the state machine transitions to a null state. </summary>
-    public StateClearedDelegate onStateClear;
+    Dictionary<StringName, BaseState> _states;
+    BaseState _activeState;
 
-    private State _currentState;
-    private Node _owner;
-
-    public StateMachine(
-        Node owner,
-        StateMachineDelegate configurationHandler = null,
-        StateMachineDelegate completionHandler = null,
-        StateMachineDelegate transitionHandler = null)
+    public StateMachine(int maxStates = 8)
     {
-        _owner = owner;
+        _states = new(maxStates);
+        _context = new();
 
-        onConfigure = configurationHandler;
-        onCompletion = completionHandler;
-        onTransition = transitionHandler;
+        _activeState = null;
+    }
+
+    public void Process(float delta) {
+        _activeState?.OnTick(_context, (float) delta);
     }
 
     #region Main Functions
 
-    /// <summary> Processes the currently-active state. </summary>
-    public void Exec(float delta)
+    /// <summary>
+    /// Returns the state machine's agent context
+    /// </summary>
+    /// <returns></returns>
+    public AgentContext GetContext() {
+        return _context;
+    }
+
+    /// <summary>
+    /// Adds a state to the state machine
+    /// </summary>
+    /// <param name="state"></param>
+    public void Add(BaseState state)
     {
-        if (!IsInstanceValid(_currentState))
+        StringName id = state.Identifier;
+
+        if (_states.ContainsKey(id))
             return;
 
-        _currentState.OnUpdate(this, delta);
+        _states[id] = state;
     }
 
-    /// <summary> Processes the currently-active state. </summary>
-    public void Exec(double delta)
+    /// <summary>
+    /// Sets the active state by ID
+    /// </summary>
+    public void Set(StringName id)
     {
-        Exec((float) delta);
-    }
-
-    /// <summary> Returns a RefCounted to the currently-active state. </summary>
-    public State GetState()
-    {
-        return _currentState;
-    }
-
-    /// <summary> Returns a RefCounted to the state machine's owner. </summary>
-    public T GetOwner<T>() where T: Node
-    {
-        return (T) _owner;
-    }
-
-    /// <summary> Tells the state machine that all tasks have been completed. This must only be called by the currently-active state. </summary>
-    public void CompleteState(State state)
-    {
-        if (_currentState != state)
-            return;
-
-        onCompletion?.Invoke(state);
-    }
-
-    public void TransitionState(State nextState)
-    {
-        // Prevent transitioning to the same state
-        if (_currentState == nextState)
-            return;
-
-        // Prepare the next state
-        State previousState = _currentState;
-        onConfigure?.Invoke(nextState);
-
-        // Cleanup
-        if (IsInstanceValid(_currentState)) {
-            _currentState.OnExit(this);
-        }
-
-        // Finalisation
-        _currentState = nextState;
-
-        if (!IsInstanceValid(_currentState)) {
-            onStateClear?.Invoke();
+        if (!_states.TryGetValue(id, out BaseState state)) {
+            _activeState = null;
             return;
         }
 
-        onTransition?.Invoke(previousState);
-        _currentState.OnEnter(this);
+        _activeState = state;
+        _activeState?.OnEnter(_context);
     }
 
     #endregion

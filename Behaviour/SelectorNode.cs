@@ -1,5 +1,8 @@
 namespace SadChromaLib.AI.Behaviour;
 
+/// <summary>
+/// A composite node that processes its child nodes until one returns 'Success' or 'Running'.
+/// </summary>
 public partial class SelectorNode: CompositeNode
 {
 	public SelectorNode(params BehaviourNode[] children)
@@ -7,7 +10,7 @@ public partial class SelectorNode: CompositeNode
 	{
 	}
 
-	public override Result Process(BehaviourContext context)
+	public override Result Process(AgentContext context)
 	{
 		for (int i = 0; i < _children.Count; ++ i) {
 			Result result = _children[i].Process(context);

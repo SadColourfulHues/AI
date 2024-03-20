@@ -2,6 +2,9 @@ using Godot;
 
 namespace SadChromaLib.AI.Behaviour;
 
+/// <summary>
+/// A decorator node that adds a delay before allowing further processing.
+/// </summary>
 public sealed partial class DelayNode : DecoratorNode
 {
 	private float _delay;
@@ -13,7 +16,7 @@ public sealed partial class DelayNode : DecoratorNode
 		_delay = delay;
 	}
 
-	public override Result Process(BehaviourContext context)
+	public override Result Process(AgentContext context)
 	{
 		ulong currentTime = Time.GetTicksMsec();
 		float timeSinceLastProcess = TimeSince(currentTime, _lastProcessTime);

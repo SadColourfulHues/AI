@@ -1,33 +1,24 @@
 using Godot;
+using System;
 
-namespace SadChromaLib.AI.States;
+namespace SadChromaLib.AI.StateMachine;
 
-/// <summary> An object that represents a state. Sub-classes of it can implement various processing tasks. </summary>
-public abstract partial class State : RefCounted
+/// <summary>
+/// Base class that represents a state in a FSM.
+/// </summary>
+public class BaseState
 {
-	public static StringName StateIdGeneric => "generic";
+    public static StringName GenericId = "state";
 
-	/// <summary> A unique identifier associated with a state. If not implemented, it will return AI.State.GENERIC_ID. </summary>
-	public virtual StringName GetIdentifier()
-	{
-		return StateIdGeneric;
-	}
+    /// <summary>
+    /// Used by the state machine to uniquely identify this state.
+    /// </summary>
+    public virtual StringName Identifier
+        => GenericId;
 
-	/// <summary> Returns whether or not a state has the given identifier. </summary>
-	public bool IsState(StringName stateId)
-	{
-		return GetIdentifier() == stateId;
-	}
+    /// Called when this state becomes 'active' </summary>
+    public virtual void OnEnter(AgentContext context) {}
 
-	#region Events
-
-	/// <summary> This method is called when this state becomes 'active'. Place initialisation-related tasks here. </summary>
-	public virtual void OnEnter(StateMachine smRef) {}
-	/// <summary> This method is called whenever the state machine is ran. </summary>
-	public virtual void OnUpdate(StateMachine smRef, float delta) {}
-
-	/// <summary> (Optional) This method is called whenever the state machine has finished running. Place deconstruction-related tasks here. </summary>
-	public virtual void OnExit(StateMachine smRef) {}
-
-	#endregion
-}
+    /// <summary> Called per frame when this state is active </summary>
+    public virtual void OnTick(AgentContext context, float delta) {}
+};

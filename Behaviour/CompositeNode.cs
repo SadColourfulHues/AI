@@ -2,6 +2,9 @@ using Godot.Collections;
 
 namespace SadChromaLib.AI.Behaviour;
 
+/// <summary>
+/// Base class for all composite nodes. (Nodes that stores references to a collection of child nodes.)
+/// </summary>
 public abstract partial class CompositeNode : BehaviourNode
 {
 	protected Array<BehaviourNode> _children;

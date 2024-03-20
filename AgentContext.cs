@@ -1,13 +1,16 @@
 using Godot;
 using Godot.Collections;
 
-namespace SadChromaLib.AI.Behaviour;
+namespace SadChromaLib.AI;
 
-public sealed partial class BehaviourContext: RefCounted
+/// <summary>
+/// An object that stores data relevant to information processing for AI agents
+/// </summary>
+public sealed partial class AgentContext
 {
 	private Dictionary<StringName, Variant> _state;
 
-	public BehaviourContext()
+	public AgentContext()
 	{
 		_state = new();
 	}

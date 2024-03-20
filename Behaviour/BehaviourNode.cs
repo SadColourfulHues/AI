@@ -9,7 +9,10 @@ public enum Result
 	Failure
 }
 
+/// <summary>
+/// The base class of all behaviour nodes.
+/// </summary>
 public abstract partial class BehaviourNode : RefCounted
 {
-	public abstract Result Process(BehaviourContext context);
+	public abstract Result Process(AgentContext context);
 }

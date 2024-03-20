@@ -2,12 +2,15 @@ using Godot;
 
 namespace SadChromaLib.AI.Behaviour;
 
-public sealed partial class ProcessTree : RefCounted
+/// <summary>
+/// An evaluator that relies on behaviour nodes to determine an agent's next course of action.
+/// </summary>
+public sealed partial class BehaviourTree : RefCounted
 {
 	private BehaviourNode _root;
-	private BehaviourContext _context;
+	private AgentContext _context;
 
-	public ProcessTree(BehaviourNode root)
+	public BehaviourTree(BehaviourNode root)
 	{
 		_root = root;
 		_context = new();
@@ -23,7 +26,7 @@ public sealed partial class ProcessTree : RefCounted
 		_root.Process(_context);
 	}
 
-	public BehaviourContext GetContext()
+	public AgentContext GetContext()
 	{
 		return _context;
 	}
