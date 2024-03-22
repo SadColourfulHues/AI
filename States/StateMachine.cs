@@ -43,7 +43,7 @@ public sealed partial class StateMachine
     public void Add<T>(T state)
         where T: struct, IState
     {
-        string id = state.Identifier;
+        string id = state.GetStateIdentifier();
 
         if (_states.ContainsKey(id))
             return;

@@ -125,6 +125,114 @@ public sealed partial class AgentContext
 	}
 
 	/// <summary>
+	/// Writes a stored boolean value to 'target' and returns true if the specified
+	/// item exists in the context.
+	/// </summary>
+	/// <returns></returns>
+	public bool TryReadBool(string key, out bool target)
+	{
+		if (!_state.TryGetValue(key, out ContextData data)) {
+			target = default;
+			return false;
+		}
+
+		bool matchesType = data.DataType == ContextDataType.Bool;
+
+		target = matchesType ? data.BoolValue : default;
+		return matchesType;
+	}
+
+	/// <summary>
+	/// Writes a stored integer value to 'target' and returns true if the specified
+	/// item exists in the context.
+	/// </summary>
+	/// <returns></returns>
+	public bool TryReadInt(string key, out int target)
+	{
+		if (!_state.TryGetValue(key, out ContextData data)) {
+			target = default;
+			return false;
+		}
+
+		bool matchesType = data.DataType == ContextDataType.Int;
+
+		target = matchesType ? data.IntValue : default;
+		return matchesType;
+	}
+
+	/// <summary>
+	/// Writes a stored float value to 'target' and returns true if the specified
+	/// item exists in the context.
+	/// </summary>
+	/// <returns></returns>
+	public bool TryReadFloat(string key, out float target)
+	{
+		if (!_state.TryGetValue(key, out ContextData data)) {
+			target = default;
+			return false;
+		}
+
+		bool matchesType = data.DataType == ContextDataType.Float;
+
+		target = matchesType ? data.X : default;
+		return matchesType;
+	}
+
+	/// <summary>
+	/// Writes a stored Vector2 value to 'target' and returns true if the specified
+	/// item exists in the context.
+	/// </summary>
+	/// <returns></returns>
+	public bool TryReadV2(string key, out Vector2 target)
+	{
+		if (!_state.TryGetValue(key, out ContextData data)) {
+			target = default;
+			return false;
+		}
+
+		bool matchesType = data.DataType == ContextDataType.Vector2;
+
+		target = matchesType ? data.AsV2() : default;
+		return matchesType;
+	}
+
+	/// <summary>
+	/// Writes a stored boolean value to 'target' and returns true if the specified
+	/// item exists in the context.
+	/// </summary>
+	/// <returns></returns>
+	public bool TryReadV3(string key, out Vector3 target)
+	{
+		if (!_state.TryGetValue(key, out ContextData data)) {
+			target = default;
+			return false;
+		}
+
+		bool matchesType = data.DataType == ContextDataType.Vector3;
+
+		target = matchesType ? data.AsV3() : default;
+		return matchesType;
+	}
+
+	/// <summary>
+	/// Writes a stored colour value to 'target' and returns true if the specified
+	/// item exists in the context.
+	/// </summary>
+	/// <returns></returns>
+	public bool TryReadColour(string key, out Color target)
+	{
+		if (!_state.TryGetValue(key, out ContextData data)) {
+			target = default;
+			return false;
+		}
+
+		bool matchesType = data.DataType == ContextDataType.Colour;
+
+		target = matchesType ? data.AsColour() : default;
+		return matchesType;
+	}
+
+	/// <summary>
 	/// Erases a data from the context.
 	/// </summary>
 	/// <param name="key"></param>
