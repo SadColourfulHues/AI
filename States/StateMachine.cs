@@ -8,10 +8,10 @@ namespace SadChromaLib.AI.StateMachine;
 /// </summary>
 public sealed partial class StateMachine
 {
-    public delegate void StateChangedEventHandler(StringName stateId);
+    public delegate void StateChangedEventHandler(string stateId);
     AgentContext _context;
 
-    Dictionary<StringName, IState> _states;
+    Dictionary<string, IState> _states;
     IState _activeState;
 
     public StateMachine(int maxStates = 8)
@@ -43,7 +43,7 @@ public sealed partial class StateMachine
     public void Add<T>(T state)
         where T: struct, IState
     {
-        StringName id = state.Identifier;
+        string id = state.Identifier;
 
         if (_states.ContainsKey(id))
             return;
@@ -54,7 +54,7 @@ public sealed partial class StateMachine
     /// <summary>
     /// Sets the active state by ID
     /// </summary>
-    public void Set(StringName id)
+    public void Set(string id)
     {
         if (!_states.TryGetValue(id, out IState state)) {
             _activeState = null;
