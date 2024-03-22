@@ -3,15 +3,15 @@ namespace SadChromaLib.AI.Behaviour;
 /// <summary>
 /// A decorator that inverts the result of its wrapped node.
 /// </summary>
-public partial class InverterNode : DecoratorNode
+public struct InverterNode: IBehaviourNode
 {
-	public InverterNode(BehaviourNode node)
-		: base(node)
-	{
+	IBehaviourNode _target;
+
+	public InverterNode(IBehaviourNode node) {
+		_target = node;
 	}
 
-	public override Result Process(AgentContext context)
-	{
+	public Result Process(AgentContext context) {
 		return Invert(_target.Process(context));
 	}
 

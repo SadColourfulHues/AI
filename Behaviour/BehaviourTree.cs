@@ -7,16 +7,16 @@ namespace SadChromaLib.AI.Behaviour;
 /// </summary>
 public sealed partial class BehaviourTree : RefCounted
 {
-	private BehaviourNode _root;
+	private IBehaviourNode _root;
 	private AgentContext _context;
 
-	public BehaviourTree(BehaviourNode root)
+	public BehaviourTree(IBehaviourNode root)
 	{
 		_root = root;
 		_context = new();
 	}
 
-	public void SetRoot(BehaviourNode root)
+	public void SetRoot(IBehaviourNode root)
 	{
 		_root = root;
 	}

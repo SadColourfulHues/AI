@@ -2,6 +2,9 @@ using Godot;
 
 namespace SadChromaLib.AI.Behaviour;
 
+/// <summary>
+/// The output of a behaviour node.
+/// </summary>
 public enum Result
 {
 	Running,
@@ -10,9 +13,9 @@ public enum Result
 }
 
 /// <summary>
-/// The base class of all behaviour nodes.
+/// An interface that represents behaviour node.
 /// </summary>
-public abstract partial class BehaviourNode : RefCounted
+public interface IBehaviourNode
 {
-	public abstract Result Process(AgentContext context);
+	public Result Process(AgentContext context);
 }

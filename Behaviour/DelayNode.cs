@@ -5,18 +5,22 @@ namespace SadChromaLib.AI.Behaviour;
 /// <summary>
 /// A decorator node that adds a delay before allowing further processing.
 /// </summary>
-public sealed partial class DelayNode : DecoratorNode
+public struct DelayNode: IBehaviourNode
 {
-	private float _delay;
-	private ulong _lastProcessTime;
+	readonly IBehaviourNode _target;
 
-	public DelayNode(BehaviourNode target, float delay)
-		: base(target)
+	readonly float _delay;
+	ulong _lastProcessTime;
+
+	public DelayNode(IBehaviourNode node, float delay = 0.25f)
 	{
+		_target = node;
+
 		_delay = delay;
+		_lastProcessTime = 0;
 	}
 
-	public override Result Process(AgentContext context)
+	public Result Process(AgentContext context)
 	{
 		ulong currentTime = Time.GetTicksMsec();
 		float timeSinceLastProcess = TimeSince(currentTime, _lastProcessTime);
@@ -28,8 +32,7 @@ public sealed partial class DelayNode : DecoratorNode
 		return _target.Process(context);
 	}
 
-	private static float TimeSince(ulong now, ulong time)
-	{
+	private static float TimeSince(ulong now, ulong time) {
 		return (now - time) * 0.01f;
 	}
 }

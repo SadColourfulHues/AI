@@ -11,8 +11,8 @@ public sealed partial class StateMachine
     public delegate void StateChangedEventHandler(StringName stateId);
     AgentContext _context;
 
-    Dictionary<StringName, BaseState> _states;
-    BaseState _activeState;
+    Dictionary<StringName, IState> _states;
+    IState _activeState;
 
     public StateMachine(int maxStates = 8)
     {
@@ -40,7 +40,8 @@ public sealed partial class StateMachine
     /// Adds a state to the state machine
     /// </summary>
     /// <param name="state"></param>
-    public void Add(BaseState state)
+    public void Add<T>(T state)
+        where T: struct, IState
     {
         StringName id = state.Identifier;
 
@@ -55,7 +56,7 @@ public sealed partial class StateMachine
     /// </summary>
     public void Set(StringName id)
     {
-        if (!_states.TryGetValue(id, out BaseState state)) {
+        if (!_states.TryGetValue(id, out IState state)) {
             _activeState = null;
             return;
         }

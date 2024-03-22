@@ -1,9 +1,11 @@
 namespace SadChromaLib.AI.Behaviour;
 
-public partial class AlwaysNode : BehaviourNode
+/// <summary>
+/// A special node type that always returns 'success'
+/// </summary>
+public struct AlwaysNode : IBehaviourNode
 {
-	public override Result Process(AgentContext context)
-	{
+	public Result Process(AgentContext context) {
 		return Result.Success;
 	}
 }
