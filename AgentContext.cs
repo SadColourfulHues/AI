@@ -154,9 +154,7 @@ public sealed partial class AgentContext
 	{
 		Bool,
 		Int,
-		Char,
 		Float,
-		Double,
 		Vector2,
 		Vector3,
 		Colour
