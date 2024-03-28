@@ -258,14 +258,14 @@ public sealed partial class AgentContext
 
 	#region Storage Helpers
 
-	enum ContextDataType
+	enum ContextDataType: byte
 	{
-		Bool,
-		Int,
-		Float,
-		Vector2,
-		Vector3,
-		Colour
+		Bool = 1,
+		Int = 2,
+		Float = 3,
+		Vector2 = 4,
+		Vector3 = 5,
+		Colour = 6
 	}
 
 	/// <summary>
@@ -290,21 +290,45 @@ public sealed partial class AgentContext
 		public float Z;
 
 		[FieldOffset(12)]
-		public float A;
+		public byte A;
 
-		[FieldOffset(16)]
+		[FieldOffset(13)]
 		public ContextDataType DataType;
 
 		public ContextData(bool value) : this() { BoolValue = value; DataType = ContextDataType.Bool; }
 		public ContextData(int value) : this() { IntValue = value; DataType = ContextDataType.Int; }
 		public ContextData(float value) : this() { X = value; DataType = ContextDataType.Float; }
-		public ContextData(Vector2 v) : this() { X = v.X; Y = v.Y; DataType = ContextDataType.Vector2; }
-		public ContextData(Vector3 v) : this() { X = v.X; Y = v.Y; Z = v.Z; DataType = ContextDataType.Vector3; }
-		public ContextData(Color v) : this() { X = v.R; Y = v.G; Z = v.B; A = v.A; DataType = ContextDataType.Colour; }
+
+		public ContextData(Vector2 v) : this()
+		{
+			X = v.X;
+			Y = v.Y;
+
+			DataType = ContextDataType.Vector2;
+		}
+
+		public ContextData(Vector3 v) : this()
+		{
+			X = v.X;
+			Y = v.Y;
+			Z = v.Z;
+
+			DataType = ContextDataType.Vector3;
+		}
+
+		public ContextData(Color v) : this()
+		{
+			X = v.R;
+			Y = v.G;
+			Z = v.B;
+			A = (byte) Mathf.Floor(255f * v.A);
+
+			DataType = ContextDataType.Colour;
+		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public readonly Vector2 AsV2() { return new(X, Y); }
 		[MethodImpl(MethodImplOptions.AggressiveInlining)] public readonly Vector3 AsV3() { return new(X, Y, Z); }
-		[MethodImpl(MethodImplOptions.AggressiveInlining)] public readonly Color AsColour() { return new(X, Y, Z, A); }
+		[MethodImpl(MethodImplOptions.AggressiveInlining)] public readonly Color AsColour() { return new(X, Y, Z, (float)A/255f); }
 	}
 
 	#endregion
