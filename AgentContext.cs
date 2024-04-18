@@ -4,6 +4,8 @@ using System.Collections.Generic;
 
 using Godot;
 
+using SadChromaLib.Types;
+
 namespace SadChromaLib.AI;
 
 /// <summary>
@@ -15,6 +17,45 @@ public sealed partial class AgentContext
 
 	public AgentContext() {
 		_state = new();
+	}
+
+	/// <summary>
+	/// Writes an AnyData into the context. (Only value types are supported!)
+	/// </summary>
+	public void Write(string key, AnyData data)
+	{
+		switch (data.DataType)
+		{
+			case AnyData.Type.Bool:
+				_state[key] = new(data.BoolValue);
+				break;
+
+			case AnyData.Type.Int:
+				_state[key] = new(data.IntValue);
+				break;
+
+			case AnyData.Type.Float:
+				_state[key] = new(data.X);
+				break;
+
+			case AnyData.Type.Vector2:
+				_state[key] = new(data.AsV2());
+				break;
+
+			case AnyData.Type.Vector3:
+				_state[key] = new(data.AsV3());
+				break;
+
+			case AnyData.Type.Colour:
+				_state[key] = new(data.AsColour());
+				break;
+
+			default:
+				#if TOOLS
+				GD.PrintErr($"AgentContext: context cannot store AnyData of type \"{data.DataType}\"");
+				#endif
+			break;
+		}
 	}
 
 	/// <summary>
@@ -269,7 +310,7 @@ public sealed partial class AgentContext
 	}
 
 	/// <summary>
-	/// A union holding possible data stored in a context
+	/// A union holding value types stored in an agent context
 	/// </summary>
 	[StructLayout(LayoutKind.Explicit)]
 	private struct ContextData

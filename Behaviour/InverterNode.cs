@@ -12,15 +12,6 @@ public struct InverterNode: IBehaviourNode
 	}
 
 	public Result Process(AgentContext context) {
-		return Invert(_target.Process(context));
-	}
-
-	public static Result Invert(Result result)
-	{
-		if (result == Result.Running)
-			return result;
-
-		return result == Result.Success ?
-			Result.Failure : Result.Success;
+		return IBehaviourNode.Invert(_target.Process(context));
 	}
 }
