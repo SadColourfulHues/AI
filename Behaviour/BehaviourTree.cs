@@ -1,12 +1,16 @@
 using Godot;
 
+using SadChromaLib.Types;
+
 namespace SadChromaLib.AI.Behaviour;
 
 /// <summary>
 /// An evaluator that relies on behaviour nodes to determine an agent's next course of action.
 /// </summary>
-public sealed partial class BehaviourTree : RefCounted
+public sealed partial class BehaviourTree: RefCounted
 {
+	public event AgentContext.EventCallbackDelegate OnEvent;
+
 	private IBehaviourNode _root;
 	private AgentContext _context;
 
@@ -14,7 +18,10 @@ public sealed partial class BehaviourTree : RefCounted
 	{
 		_root = root;
 		_context = new();
+		_context.EventHandler = OnContextEvent;
 	}
+
+	#region Main Functions
 
 	public void SetRoot(IBehaviourNode root)
 	{
@@ -30,4 +37,14 @@ public sealed partial class BehaviourTree : RefCounted
 	{
 		return _context;
 	}
+
+	#endregion
+
+	#region Events
+
+	private void OnContextEvent(string id, AnyData info) {
+		OnEvent?.Invoke(id, info);
+	}
+
+	#endregion
 }

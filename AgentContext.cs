@@ -1,3 +1,4 @@
+using System;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 using System.Collections.Generic;
@@ -13,11 +14,16 @@ namespace SadChromaLib.AI;
 /// </summary>
 public sealed partial class AgentContext
 {
+	public delegate void EventCallbackDelegate(string eventId, AnyData info);
+	public EventCallbackDelegate EventHandler;
+
 	private Dictionary<string, ContextData> _state;
 
 	public AgentContext() {
 		_state = new();
 	}
+
+	#region I/O
 
 	/// <summary>
 	/// Writes an AnyData into the context. (Only value types are supported!)
@@ -296,6 +302,20 @@ public sealed partial class AgentContext
 	public void Reset() {
 		_state.Clear();
 	}
+
+	#endregion
+
+	#region Events
+
+	public void TriggerEvent(string eventId) {
+		EventHandler?.Invoke(eventId, AnyData.Empty);
+	}
+
+	public void TriggerEvent(string eventId, AnyData extraInfo) {
+		EventHandler?.Invoke(eventId, extraInfo);
+	}
+
+	#endregion
 
 	#region Storage Helpers
 

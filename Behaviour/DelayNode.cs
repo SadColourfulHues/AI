@@ -1,5 +1,7 @@
 using Godot;
 
+using SadChromaLib.Utils.Timing;
+
 namespace SadChromaLib.AI.Behaviour;
 
 /// <summary>
@@ -10,29 +12,33 @@ public struct DelayNode: IBehaviourNode
 	readonly IBehaviourNode _target;
 
 	readonly float _delay;
-	ulong _lastProcessTime;
+	readonly bool _passthrough;
+	long _lastProcessTicks;
 
-	public DelayNode(IBehaviourNode node, float delay = 0.25f)
+	public DelayNode(float delay, IBehaviourNode node)
 	{
 		_target = node;
+		_passthrough = false;
 
 		_delay = delay;
-		_lastProcessTime = 0;
+		_lastProcessTicks = 0;
+	}
+
+	public DelayNode(float delay, bool passthrough, IBehaviourNode node)
+		: this(delay, node)
+	{
+		_passthrough = passthrough;
 	}
 
 	public Result Process(AgentContext context)
 	{
-		ulong currentTime = Time.GetTicksMsec();
-		float timeSinceLastProcess = TimeSince(currentTime, _lastProcessTime);
+		long currentTime = TimingUtils.GetTicks();
+		float timeSinceLastProcess = (float) TimingUtils.MsecsSince(_lastProcessTicks * TimingUtils.MsecsFac);
 
 		if (timeSinceLastProcess < _delay)
-			return Result.Failure;
+			return (_passthrough ? Result.Success : Result.Failure);
 
-		_lastProcessTime = currentTime;
+		_lastProcessTicks = currentTime;
 		return _target.Process(context);
-	}
-
-	private static float TimeSince(ulong now, ulong time) {
-		return (now - time) * 0.01f;
 	}
 }
